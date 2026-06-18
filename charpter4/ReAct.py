@@ -132,5 +132,5 @@ if __name__ == "__main__":
     search_desc = "一个网页搜索引擎。当你需要回答关于时事、事实以及在你的知识库中找不到的信息时，应使用此工具。"
     tool_executor.registerTool("Search", search_desc, search)
     agent = ReActAgent(llm_client=llm, tool_executor=tool_executor)
-    question = "华为最新的手机是哪一款？它的主要卖点是什么？"
+    question = "为什么我在将本地仓库绑定到GitHub时，老是提示输入UserName和PassWord并提示错误：'remote: Invalid username or token. Password authentication is not supported for Git operations.fatal: Authentication failed for \'https://github.com/albert-boy/Agent.git/\''?应该如何解决？"
     agent.run(question)
