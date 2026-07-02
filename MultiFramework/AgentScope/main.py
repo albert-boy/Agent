@@ -4,8 +4,9 @@ import os
 import random
 from typing import List, Dict, Optional
 
-from agentscope.agent import ReActAgent
+from agentscope.agent import Agent
 from agentscope.model import OpenAIChatModel
+from agentscope.app.message_bus import InMemoryMessageBus
 from agentscope.pipeline import MsgHub, sequential_pipeline, fanout_pipeline
 from agentscope.credential import OpenAICredential
 from agentscope.formatter import OpenAIMultiAgentFormatter
@@ -35,15 +36,15 @@ class ThreeKingdomsWerewolfGame():
     """三国狼人杀游戏主类"""
     
     def __init__(self):
-        self.players: Dict[str, ReActAgent] = {}
+        self.players: Dict[str, Agent] = {}
         self.roles: Dict[str, str] = {}
         self.moderator = GameModerator()
-        self.alive_players: List[ReActAgent] = []
-        self.werewolves: List[ReActAgent] = []
-        self.villagers: List[ReActAgent] = []
-        self.seer: List[ReActAgent] = []
-        self.witch: List[ReActAgent] = []
-        self.hunter: List[ReActAgent] = []
+        self.alive_players: List[Agent] = []
+        self.werewolves: List[Agent] = []
+        self.villagers: List[Agent] = []
+        self.seer: List[Agent] = []
+        self.witch: List[Agent] = []
+        self.hunter: List[Agent] = []
         
         # 女巫道具状态
         self.witch_has_antidote = True
@@ -238,12 +239,12 @@ class ThreeKingdomsWerewolfGame():
                 self.witch = [p for p in self.witch if p.name != dead_name]
                 self.hunter = [p for p in self.hunter if p.name != dead_name]
 
-    async def create_player(self, role: str, character: str) -> ReActAgent:
+    async def create_player(self, role: str, character: str) -> Agent:
         """创建具有三国背景的玩家"""
         name = get_chinese_name(character)
         self.roles[name] = role
         
-        agent = ReActAgent(
+        agent = Agent(
             name=name,
             sys_prompt=Prompts.get_role_prompt(role, character),
             model=OpenAIChatModel(
@@ -251,8 +252,8 @@ class ThreeKingdomsWerewolfGame():
                 api_key=os.getenv["LLM_API_KEY"],
                 base_url=os.getenv("LLM_BASE_URL"),
                 enable_thinking=True,
+                formatter=OpenAIMultiAgentFormatter(),
             ),
-            formatter=OpenAIMultiAgentFormatter(),
         )
         
         # 角色身份确认
