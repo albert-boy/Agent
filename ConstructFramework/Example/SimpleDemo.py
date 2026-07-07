@@ -1,4 +1,4 @@
-from hello_agents import SimpoleAgent, HelloAgentsLLM
+from hello_agents import SimpleAgent, HelloAgentsLLM
 from dotenv import load_dotenv
 from hello_agents.tools import CalculatorTool
 
@@ -6,7 +6,7 @@ load_dotenv()
 
 llm = HelloAgentsLLM()
 
-agent = SimpoleAgent(
+agent = SimpleAgent(
     name="AI助手",
     llm=llm,
     system_prompt="你是一个有用的AI助手",
